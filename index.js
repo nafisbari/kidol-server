@@ -46,6 +46,19 @@ async function run() {
 
         })
 
+        //get Orders
+        app.get('/orders', async (req, res) => {
+            const userEmail = req.query.email;
+            const cursor = ordersCollection.find({});
+            const result = await cursor.toArray();
+            if (userEmail) {
+                const newResult = result.filter(order => order.email === userEmail);
+                res.send(newResult);
+            } else {
+                res.send(result);
+            }
+
+        })
 
 
     }
