@@ -49,6 +49,7 @@ async function run() {
         //get Orders
         app.get('/orders', async (req, res) => {
             const userEmail = req.query.email;
+            console.log(userEmail)
             const cursor = ordersCollection.find({});
             const result = await cursor.toArray();
             if (userEmail) {
@@ -58,6 +59,15 @@ async function run() {
                 res.send(result);
             }
 
+        })
+
+        //get order using id
+        app.get('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const order = await ordersCollection.findOne(query);
+            console.log(id);
+            res.send(order);
         })
 
 
