@@ -70,6 +70,17 @@ async function run() {
             res.send(order);
         })
 
+        //delete order
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await ordersCollection.deleteOne(query);
+            console.log(result);
+            console.log('deleting', id)
+            res.json(result);
+        });
+
 
     }
     finally {
