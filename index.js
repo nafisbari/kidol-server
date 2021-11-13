@@ -81,6 +81,15 @@ async function run() {
             res.json(result);
         });
 
+        //post reviews
+        //Post Orders
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
+            res.json(result);
+
+        })
+
 
     }
     finally {
