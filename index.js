@@ -26,6 +26,7 @@ async function run() {
         const toysCollection = database.collection('toys');
         const ordersCollection = database.collection('orders');
         const reviewsCollection = database.collection('reviews');
+        const usersCollection = database.collection('users');
 
 
 
@@ -142,15 +143,56 @@ async function run() {
 
         //get reviews
         app.get('/reviews', async (req, res) => {
-
             const cursor = reviewsCollection.find({});
             const review = await cursor.toArray();
-
             res.send(review)
         })
 
+        ////    USER info operation ////
 
+        //sending user to db
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.json(result);
 
+        })
+
+        //getting user with email
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            let isAdmin = false;
+            if (user?.role === 'admin') {
+                isAdmin = true;
+            }
+            res.json({ admin: isAdmin })
+        })
+
+        //update user if not in db
+        app.put('/users', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const options = { upsert: true };
+            const updateUser = {
+                $set: user
+            };
+            const result = await usersCollection.updateOne(filter, updateUser, options);
+            res.json(result)
+
+        })
+
+        //admin making
+        app.put('/users/admin', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const updateDoc = {
+                $set: { role: 'admin' }
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc);
+            res.json(result)
+        })
     }
     finally {
         //await client.close(); 
