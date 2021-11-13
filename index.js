@@ -29,6 +29,7 @@ async function run() {
 
 
 
+        ////   TOYS Operaion   ////
         //get toys collection
         app.get('/toys', async (req, res) => {
 
@@ -37,6 +38,27 @@ async function run() {
 
             res.send(toys)
         })
+
+        //Post toy
+        app.post('/toys', async (req, res) => {
+            const addToy = req.body;
+            const result = await toysCollection.insertOne(addToy);
+            res.json(result);
+
+        })
+        //get toy using id
+        app.get('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const toy = await toysCollection.findOne(query);
+            console.log(id);
+            res.send(toy);
+        })
+
+
+
+
+        ////   ORDERS Operation   /////
 
         //Post Orders
         app.post('/orders', async (req, res) => {
@@ -81,14 +103,42 @@ async function run() {
             res.json(result);
         });
 
+        //update order
+        app.put('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const orderStatus = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedStatus = {
+                $set: {
+                    status: orderStatus.status,
+                }
+            };
+            const result = await ordersCollection.updateOne(filter, updatedStatus, options);
+            res.json(result);
+        })
+
+
+
+
+        ////    REVIEW Operation ////
         //post reviews
-        //Post Orders
         app.post('/reviews', async (req, res) => {
             const review = req.body;
             const result = await reviewsCollection.insertOne(review);
             res.json(result);
 
         })
+
+        //get reviews
+        app.get('/reviews', async (req, res) => {
+
+            const cursor = reviewsCollection.find({});
+            const review = await cursor.toArray();
+
+            res.send(review)
+        })
+
 
 
     }
