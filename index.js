@@ -157,6 +157,11 @@ async function run() {
             res.json(result);
 
         })
+        app.get('/users', async (req, res) => {
+            const cursor = usersCollection.find({});
+            const user = await cursor.toArray();
+            res.send(user)
+        })
 
         //getting user with email
         app.get('/users/:email', async (req, res) => {
